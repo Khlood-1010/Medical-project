@@ -23,6 +23,7 @@ class _SingUpState extends State<SingUp> {
   TextEditingController age = TextEditingController();
   TextEditingController wiegth = TextEditingController();
   TextEditingController phone = TextEditingController();
+  //
 //-----------------------------------------------------------------------
 
   GlobalKey<FormState> formstat = new GlobalKey<FormState>();
