@@ -109,8 +109,8 @@ Drawer drawer(conext) {
                 "lib/assist/profile.jpg",
               ),
             ),
-            accountName: Text("الاء خالد احمد"),
-            accountEmail: Text("Alaa.dev90@gmail.com")),
+            accountName: Text("خلود الحربي"), 
+            accountEmail: Text("khlood.1100@hotmail.com")),
         ListTile(
           title: Text("الصفحة الرئسية"),
           leading: Icon(Icons.home, color: iconColor),
