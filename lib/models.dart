@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'home pages/ConcatUs/ConcatUs.dart';
 import 'home pages/Emergency/Emergency.dart';
 import 'home pages/alerts/Aleart.dart';
+import 'home pages/alerts/notification/AleartHome.dart';
 import 'home pages/meals/Meals.dart';
 import 'home pages/sugerTest/SugerTest.dart';
 import 'home pages/userHome.dart';
@@ -129,7 +130,7 @@ Drawer drawer(conext) {
           title: Text("تنبهات بمواعيد الادوية"),
           leading: Icon(Icons.timer, color: iconColor),
           onTap: () {
-            goToPage(conext, Aleart());
+            goToPage(conext, AleartHome());
           },
         ),
         ListTile(
