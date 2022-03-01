@@ -19,6 +19,7 @@ class _SugerTestState extends State<SugerTest> {
   var testToInt;
   var userId;
   var userEmail;
+  String diabetesTherpy;
 
   var test, midicalTaype;
   TextEditingController sugerPersentg = TextEditingController();
@@ -190,11 +191,11 @@ class _SugerTestState extends State<SugerTest> {
                                   switch (test) {
                                     case "فحص السكر التراكمي":
                                       trakomeTest(sugerTrakome.text);
-                                      sugerTrakome.clear();
+                                     // sugerTrakome.clear();
                                       break;
                                     case 'بعد الاكل بساعتين':
                                       randoumTest(sugerPersentg.text);
-                                      sugerPersentg.clear();
+                                     // sugerPersentg.clear();
                                       break;
                                   }
                                 }
@@ -213,7 +214,7 @@ class _SugerTestState extends State<SugerTest> {
 
 //--------------------------اظهار النتيجة في حاله الفحص التراكمي----------------------------
   trakomeTest(test) {
-    testToInt = num.parse(test);
+    testToInt = num.parse(test.trim());
     if (testToInt < 5.7) {
       showDialogMethod(context, "نتيجة الفحص",
           "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
@@ -231,7 +232,7 @@ class _SugerTestState extends State<SugerTest> {
     testToInt = int.parse(test.trim());
     if (testToInt < 80) {
       showOptionYesNo(
-          context, "نتيجة الفحص", " لديك هبوط حاد في السكر " + addToDB,  addSugerTestToDb() );
+          context, "نتيجة الفحص", " لديك هبوط حاد في السكر " + addToDB,  addSugerTestToDb );
     } else if (testToInt >= 80 && testToInt <= 130) {
       showDialogMethod(context, "نتيجة الفحص",
           "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
@@ -256,6 +257,7 @@ class _SugerTestState extends State<SugerTest> {
         //التحقق ما اذا تمت العمليه بنجاح ام لا
         .then((value) {
       Navigator.pop(context);
+       Navigator.pop(context);
       showOptionDaylog(
           context,
           "اختبار السكر",
