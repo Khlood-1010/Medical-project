@@ -457,3 +457,45 @@ showDialogs(BuildContext context, String titel, String body) {
 int createUnidID() {
   return DateTime.now().millisecondsSinceEpoch.remainder(1000);
 }
+
+
+//--------------------------------------------------------------------------------
+showOptionYesNo(BuildContext context, String titel, String contant,Function yseFuncation) {
+  var width = MediaQuery.of(context).size.width;
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+            title: Text(titel, textDirection: TextDirection.rtl),
+            content: Text(contant, textDirection: TextDirection.rtl),
+            actions: [
+              Row(
+                //mainAxisSize: MainAxisSize.min,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("نعم"),
+                    onPressed: yseFuncation
+                    
+                    
+                  ),
+                  SizedBox(
+                    width: width / 3.5,
+                  ),
+                  RaisedButton(
+                    color: Colors.red,
+                    child: Text("لا"),
+                    onPressed:(){
+                      Navigator.pop(context);
+
+                    }
+                     
+                    ,
+                  ),
+                ],
+              )
+            ]);
+      });
+}
+String addToDB="هل تريد الاحتفاظ بنتيجة الفحص؟";

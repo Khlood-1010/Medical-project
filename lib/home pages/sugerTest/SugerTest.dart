@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:medical/home%20pages/userHome.dart';
 
 import '../../models.dart';
-
 
 class SugerTest extends StatefulWidget {
   SugerTest({Key key}) : super(key: key);
@@ -13,13 +15,28 @@ class SugerTest extends StatefulWidget {
 class _SugerTestState extends State<SugerTest> {
   bool sugerPerText = true;
   bool sugerTrakText = false;
-  bool showTime = false;
+ 
   var testToInt;
+  var userId;
+  var userEmail;
 
   var test, midicalTaype;
   TextEditingController sugerPersentg = TextEditingController();
   TextEditingController sugerTrakome = TextEditingController();
   GlobalKey<FormState> formstat = GlobalKey();
+
+  getCurrentUser() {
+    userId = FirebaseAuth.instance.currentUser.uid;
+    userEmail = FirebaseAuth.instance.currentUser.email;
+    print("=======$userEmail");
+    print("=======$userId");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +70,8 @@ class _SugerTestState extends State<SugerTest> {
                   height * 0.45,
                   35,
                   10,
-                  10,0,
+                  10,
+                  0,
                   white,
                   10,
                   //child:
@@ -104,9 +122,9 @@ class _SugerTestState extends State<SugerTest> {
                         SizedBox(height: 10),
 // وقت الاختبار--------------------------------------------------------------------------------
                         Container(
+                          // color: Colors.red,
                           width: double.infinity,
-                          padding:
-                              EdgeInsets.only(top: 15, left: 15, right: 15),
+                          padding: EdgeInsets.only(right: 5),
                           child: DropdownButton<String>(
                             iconEnabledColor: iconColor,
                             iconSize: 30,
@@ -116,7 +134,6 @@ class _SugerTestState extends State<SugerTest> {
                             items: <String>[
                               "فحص السكر التراكمي",
                               'بعد الاكل بساعتين',
-                              'فحص الدم للصائم'
                             ].map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -144,55 +161,17 @@ class _SugerTestState extends State<SugerTest> {
                                         //showTime = true;
                                       });
                                     }
-                                    break;
-                                  case 'فحص الدم للصائم':
-                                    {
-                                      setState(() {
-                                        sugerPerText = true;
-                                        sugerTrakText = false;
-                                        //showTime = false;
-                                      });
-                                    }
+
                                     break;
                                 }
                               });
                             },
                           ),
                         ),
-//وقت الاختبار-------------------------------------------------------------------------------------
 
-                        // Visibility(
-                        //   visible: showTime,
-                        //   child: Container(
-                        //     width: double.infinity,
-                        //     padding:
-                        //         EdgeInsets.only(top: 15, left: 15, right: 15),
-                        //     child: DropdownButton<String>(
-                        //       iconEnabledColor: iconColor,
-                        //       iconSize: 30,
-                        //       hint: Text(
-                        //           "اختر نوع العلاج                            "),
-                        //       value: midicalTaype,
-                        //       items: <String>[' قبل الاكل', 'بعد الاكل']
-                        //           .map((String value) {
-                        //         return DropdownMenuItem<String>(
-                        //           value: value,
-                        //           child: Center(child: Text(value)),
-                        //         );
-                        //       }).toList(),
-                        //       onChanged: (vale) {
-                        //         setState(() {
-                        //           midicalTaype = vale;
-                        //           print(midicalTaype);
-                        //         });
-                        //       },
-                        //     ),
-                        //   ),
-                        // ),
 // save buttom-------------------------------------------------------------------------------------
 
                         Container(
-                            //color: Colors.red,
                             width: double.infinity,
                             margin:
                                 EdgeInsets.only(top: 10, right: 20, left: 20),
@@ -215,10 +194,6 @@ class _SugerTestState extends State<SugerTest> {
                                       break;
                                     case 'بعد الاكل بساعتين':
                                       randoumTest(sugerPersentg.text);
-                                      sugerPersentg.clear();
-                                      break;
-                                    case 'فحص الدم للصائم':
-                                      siyamTest(sugerPersentg.text);
                                       sugerPersentg.clear();
                                       break;
                                   }
@@ -253,49 +228,42 @@ class _SugerTestState extends State<SugerTest> {
 
 //----------------------اظهار النتيجة في حاله الفحص بعد الاكل--------------------------------
   randoumTest(test) {
-    testToInt = int.parse(test);
-    if (testToInt <= 50) {
-      showDialogMethod(context, "نتيجة الفحص", "لديك هبوط حاد في السكر");
-    } else if (testToInt > 50 && testToInt <= 140) {
+    testToInt = int.parse(test.trim());
+    if (testToInt < 80) {
+      showOptionYesNo(
+          context, "نتيجة الفحص", " لديك هبوط حاد في السكر " + addToDB,  addSugerTestToDb() );
+    } else if (testToInt >= 80 && testToInt <= 130) {
       showDialogMethod(context, "نتيجة الفحص",
           "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
-    } else if (testToInt >= 140 && testToInt <= 199) {
-      showDialogMethod(context, "نتيجة الفحص",
-          " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
     } else {
       showDialogMethod(context, "نتيجة الفحص",
           "انت مصاب بمرض السكر ومعدل السكر في الدم مرتفع");
     }
   }
+//-----------------------------------------------------------------------
+  addSugerTestToDb() async {
+      lodding(context, "");
+    await FirebaseFirestore.instance.collection('SugarTable').add({
+      "userID": userId,
+      'Emile': userEmail,
+      "Date of Test":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+      "Time of Test":"${DateTime.now().hour} : ${DateTime.now().minute}",
+       "Measure" : sugerPerText? sugerPersentg.text:sugerTrakome.text,
+       "Diabetes type":sugerPerText? "عشوائي":"تراكمي",
 
-// //-------------------------اظهار النتيجة في حاله الحامل -----------------------------
-//   brignitTest(test) {
-//     testToInt = int.parse(test);
-//     if (testToInt < 100) {
-//       print("انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
-//     } else if (testToInt > 100 && testToInt <= 125) {
-//       print(
-//           " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
-//     } else {
-//       print("انت مصاب بمرض السكر ومعدل السكر في الدم مرتفع");
-//     }
-//   }
+    })
 
-//------------------------اظهار النتيجة في حاله الفحص الصيامي------------------------------
-  siyamTest(test) {
-    //convert string to int value
-    testToInt = int.parse(test);
-    if (testToInt < 70) {
-      showDialogMethod(context, "نتيجة الفحص", "لديك هبوط حاد في السكر");
-    } else if (testToInt >= 70 && testToInt <= 100) {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
-    } else if (testToInt > 100 && testToInt <= 125) {
-      showDialogMethod(context, "نتيجة الفحص",
-          " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
-    } else {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت مصاب بمرض السكر ومعدل السكر في الدم مرتفع");
-    }
+        //التحقق ما اذا تمت العمليه بنجاح ام لا
+        .then((value) {
+      Navigator.pop(context);
+      showOptionDaylog(
+          context,
+          "اختبار السكر",
+          "تمت العملية بنجاح هل تريد الذهاب الي الصفحة الرئيسية؟",
+          UserHome());
+    }).catchError((e) {
+      Navigator.pop(context);
+      showDialogMethod(context, "انشاء حساب", "حصلت مشكلة في قاعدة البيانات");
+    });
   }
 }

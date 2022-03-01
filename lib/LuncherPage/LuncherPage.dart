@@ -32,7 +32,7 @@ class _LuncherPageState extends State<LuncherPage> {
                         color: Colors.white))),
             Container(
                margin: EdgeInsets.only(top: 15,bottom: 10),
-                child: Text("Care of Diabetes",
+                child: Text("رعاية مرضى السكري ",
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,

@@ -11,8 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  
-  
 
   var user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -36,12 +34,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'DroidKufi'),
-      home: Directionality(textDirection: TextDirection.rtl, child: 
-   // islogging==false?
-    LuncherPage()
-    //:
-     // UserHome()
-      ),
+      home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: 
+          islogging == false ?
+           LuncherPage() :
+
+            UserHome()),
     );
   }
 }

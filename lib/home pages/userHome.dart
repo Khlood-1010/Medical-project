@@ -85,8 +85,8 @@ class _UserHomeState extends State<UserHome> {
                       itemCount: 4,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, //عدد العناصر في كل صف
-                          crossAxisSpacing: 30, // المسافات الراسية
-                          childAspectRatio: 0.75, //حجم العناصر
+                          crossAxisSpacing: 20, // المسافات الراسية
+                          childAspectRatio: 0.70, //حجم العناصر
                           mainAxisSpacing: 2 //المسافات الافقية
 
                           ),
