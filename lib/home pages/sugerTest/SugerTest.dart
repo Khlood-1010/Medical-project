@@ -15,11 +15,11 @@ class SugerTest extends StatefulWidget {
 class _SugerTestState extends State<SugerTest> {
   bool sugerPerText = true;
   bool sugerTrakText = false;
- 
+
   var testToInt;
   var userId;
   var userEmail;
-  String diabetesTherpy;
+  String diabetesResult;
 
   var test, midicalTaype;
   TextEditingController sugerPersentg = TextEditingController();
@@ -191,11 +191,11 @@ class _SugerTestState extends State<SugerTest> {
                                   switch (test) {
                                     case "فحص السكر التراكمي":
                                       trakomeTest(sugerTrakome.text);
-                                     // sugerTrakome.clear();
+                                      // sugerTrakome.clear();
                                       break;
                                     case 'بعد الاكل بساعتين':
                                       randoumTest(sugerPersentg.text);
-                                     // sugerPersentg.clear();
+                                      // sugerPersentg.clear();
                                       break;
                                   }
                                 }
@@ -215,15 +215,24 @@ class _SugerTestState extends State<SugerTest> {
 //--------------------------اظهار النتيجة في حاله الفحص التراكمي----------------------------
   trakomeTest(test) {
     testToInt = num.parse(test.trim());
-    if (testToInt < 5.7) {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
-    } else if (testToInt >= 5.7 && testToInt <= 6.4) {
+    if (testToInt < 4) {
+     setState(() {
+        diabetesResult = "منخفض";
+      });
+      showOptionYesNo(context, "نتيجة الفحص",
+          " لديك هبوط حاد في السكر " + addToDB, addSugerTestToDb);
+    } else if (testToInt >= 4 && testToInt <= 6.4) {
       showDialogMethod(context, "نتيجة الفحص",
           " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
     } else {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت مصاب بمرض السكر ومعدل السكر في الدم مرتفع");
+      setState(() {
+        diabetesResult = "مرتفع";
+      });
+      showOptionYesNo(
+          context,
+          "نتيجة الفحص",
+          "انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
+          addSugerTestToDb);
     }
   }
 
@@ -231,38 +240,52 @@ class _SugerTestState extends State<SugerTest> {
   randoumTest(test) {
     testToInt = int.parse(test.trim());
     if (testToInt < 80) {
-      showOptionYesNo(
-          context, "نتيجة الفحص", " لديك هبوط حاد في السكر " + addToDB,  addSugerTestToDb );
+      setState(() {
+        diabetesResult = "منخفض";
+      });
+      showOptionYesNo(context, "نتيجة الفحص",
+          " لديك هبوط حاد في السكر " + addToDB, addSugerTestToDb);
     } else if (testToInt >= 80 && testToInt <= 130) {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي");
+      setState(() {
+        diabetesResult = "طبيعي";
+      });
+      showOptionYesNo(
+          context,
+          "نتيجة الفحص",
+          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي" + addToDB,
+          addSugerTestToDb);
     } else {
-      showDialogMethod(context, "نتيجة الفحص",
-          "انت مصاب بمرض السكر ومعدل السكر في الدم مرتفع");
+      setState(() {
+        diabetesResult = "مرتفع";
+      });
+      showOptionYesNo(
+          context,
+          "نتيجة الفحص",
+          "انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
+          addSugerTestToDb);
     }
   }
+
 //-----------------------------------------------------------------------
   addSugerTestToDb() async {
-      lodding(context, "");
+    lodding(context, "");
     await FirebaseFirestore.instance.collection('SugarTable').add({
       "userID": userId,
       'Emile': userEmail,
-      "Date of Test":"${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
-      "Time of Test":"${DateTime.now().hour} : ${DateTime.now().minute}",
-       "Measure" : sugerPerText? sugerPersentg.text:sugerTrakome.text,
-       "Diabetes type":sugerPerText? "عشوائي":"تراكمي",
-
+      "Date of Test":
+          "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+      "Time of Test": "${DateTime.now().hour} : ${DateTime.now().minute}",
+      "Measure": sugerPerText ? sugerPersentg.text : sugerTrakome.text,
+      "Diabetes type": sugerPerText ? "عشوائي" : "تراكمي",
+      "diabetes result": diabetesResult
     })
 
         //التحقق ما اذا تمت العمليه بنجاح ام لا
         .then((value) {
       Navigator.pop(context);
-       Navigator.pop(context);
-      showOptionDaylog(
-          context,
-          "اختبار السكر",
-          "تمت العملية بنجاح هل تريد الذهاب الي الصفحة الرئيسية؟",
-          UserHome());
+      Navigator.pop(context);
+      showOptionDaylog(context, "اختبار السكر",
+          "تمت العملية بنجاح هل تريد الذهاب الي الصفحة الرئيسية؟", UserHome());
     }).catchError((e) {
       Navigator.pop(context);
       showDialogMethod(context, "انشاء حساب", "حصلت مشكلة في قاعدة البيانات");
