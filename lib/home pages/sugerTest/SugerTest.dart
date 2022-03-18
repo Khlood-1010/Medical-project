@@ -222,6 +222,9 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(context, "نتيجة الفحص",
           " لديك هبوط حاد في السكر " + addToDB, addSugerTestToDb);
     } else if (testToInt >= 4 && testToInt <= 6.4) {
+       setState(() {
+        diabetesResult = "طبيعي";
+      });
       showDialogMethod(context, "نتيجة الفحص",
           " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
     } else {

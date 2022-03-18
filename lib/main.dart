@@ -37,12 +37,9 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(fontFamily: 'DroidKufi'),
       home: Directionality(
           textDirection: TextDirection.rtl,
-          child:Meals() 
-          // islogging == false ?
-          //  LuncherPage() :
-
-          //   UserHome()
-        ),
+          child:
+          islogging == false ? LuncherPage() :
+           UserHome()),
     );
   }
 }

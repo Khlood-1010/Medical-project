@@ -195,7 +195,8 @@ void goToPage(context, page) {
 
 //get Location method------------------------------------------------------------------------------------
 getLocaion() async {
-  dynamic currentLocation = LocationData;
+ try {
+    dynamic currentLocation = LocationData;
 
   var location = new Location();
   var error;
@@ -210,9 +211,12 @@ getLocaion() async {
   } on PlatformException catch (e) {
     if (e.code == 'PERMISSION_DENIED') {
       error = 'Permission denied';
+     
     }
     currentLocation = null;
   }
+ } catch (e) {
+ }
 }
 
 //page header------------------------------------------------------------------------------------
@@ -499,3 +503,25 @@ showOptionYesNo(BuildContext context, String titel, String contant,Function yseF
       });
 }
 String addToDB="هل تريد الاحتفاظ بنتيجة الفحص؟";
+//=================================Buttoms=============================
+Widget buttomText(
+    context, String text,fontSize, Color textColor ,void Function() onPressed,
+    {Color backgrounColor=Colors.blue,double horizontal = 0.0, double vertical = 0.0,double evaluation=0.0}) {
+  return SizedBox(
+    width: double.infinity,
+    height: 45,
+
+    child: TextButton(
+      onPressed: onPressed,
+      child: Text(text,style:TextStyle(fontSize: fontSize)),
+      style: ButtonStyle(
+        elevation: MaterialStateProperty.all(evaluation),
+        backgroundColor: MaterialStateProperty.all(backgrounColor),
+        foregroundColor: MaterialStateProperty.all(textColor),
+        padding: MaterialStateProperty.all(EdgeInsets.symmetric(
+            horizontal: horizontal, vertical: vertical)),
+      ),
+    ),
+  );
+}
+
