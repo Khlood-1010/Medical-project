@@ -234,7 +234,7 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(
           context,
           "نتيجة الفحص",
-          "انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
+          " انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
           addSugerTestToDb);
     }
   }
@@ -255,7 +255,7 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(
           context,
           "نتيجة الفحص",
-          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي" + addToDB,
+          " معدل السكر في الدم طبيعي" + addToDB,
           addSugerTestToDb);
     } else {
       setState(() {
@@ -264,7 +264,7 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(
           context,
           "نتيجة الفحص",
-          "انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
+          " معدل السكر في الدم مرتفع" + addToDB,
           addSugerTestToDb);
     }
   }

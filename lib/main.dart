@@ -1,17 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:medical/home%20pages/meals/Meals.dart';
-import 'LuncherPage/LuncherPage.dart';
+
+
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:medical/home%20pages/userHome.dart';
 
-import 'home pages/userHome.dart';
+import 'LuncherPage/LuncherPage.dart';
+import 'home pages/alerts/AleartHome.dart';
+import 'home pages/meals/Meals.dart';
 
 bool islogging;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+  // notification setting===========
+  AwesomeNotifications().initialize("resource://drawable/project_icon", [
+    NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic Notifications',
+        defaultColor: Colors.blue,
+        importance: NotificationImportance.High,
+        channelShowBadge: true,
+        soundSource: 'resource://raw/raw_custom_notification'),
+    NotificationChannel(
+        channelKey: 'scheduled_channel',
+        channelName: 'Scheduled Notifications',
+        defaultColor: Colors.blue,
+        importance: NotificationImportance.High,
+        locked: true,
+        soundSource: 'resource://raw/raw_custom_notification'),
+  ]);
 
   var user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -29,17 +50,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'DroidKufi'),
-      home: Directionality(
-          textDirection: TextDirection.rtl,
-          child:
-          islogging == false ? LuncherPage() :
-           UserHome()),
+      home: Directionality(textDirection: TextDirection.rtl, child: 
+    islogging==false?
+    LuncherPage():
+    UserHome()),
     );
   }
 }

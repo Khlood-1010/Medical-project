@@ -5,8 +5,8 @@ import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
 import 'home pages/ConcatUs/ConcatUs.dart';
 import 'home pages/Emergency/Emergency.dart';
-import 'home pages/alerts/Aleart.dart';
-import 'home pages/alerts/notification/AleartHome.dart';
+import 'home pages/alerts/AddAleart.dart';
+import 'home pages/alerts/AleartHome.dart';
 import 'home pages/meals/Meals.dart';
 import 'home pages/sugerTest/SugerTest.dart';
 import 'home pages/userHome.dart';
@@ -30,8 +30,8 @@ TextFormField textFromField(Widget icons, suffixIcon, String hitText,
   return TextFormField(
     obscureText: hintPass,
     validator: myvali,
-
     controller: mycontroller,
+    autovalidateMode: AutovalidateMode.onUserInteraction,
     decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[300],
@@ -95,7 +95,30 @@ String validPassword(String value) {
     return "املء الحقل اعلاه";
   }
 }
+
 //===============================================================================
+Widget text(
+  context,
+  String key,
+  double fontSize,
+  Color color, {
+  family = "DroidKufi",
+  align = TextAlign.center,
+  double space = 0,
+  FontWeight fontWeight = FontWeight.normal,
+}) {
+  return Text(
+    '$key',
+    textAlign: align,
+    style: TextStyle(
+      color: color,
+      fontFamily: family,
+      fontSize: fontSize,
+      letterSpacing: space,
+      fontWeight: fontWeight,
+    ),
+  );
+}
 
 //drawer------------------------------------------------------------------------------------
 Drawer drawer(conext) {
@@ -110,7 +133,7 @@ Drawer drawer(conext) {
                 "lib/assist/profile.jpg",
               ),
             ),
-            accountName: Text("خلود الحربي"), 
+            accountName: Text("خلود الحربي"),
             accountEmail: Text("khlood.1100@hotmail.com")),
         ListTile(
           title: Text("الصفحة الرئسية"),
@@ -195,28 +218,26 @@ void goToPage(context, page) {
 
 //get Location method------------------------------------------------------------------------------------
 getLocaion() async {
- try {
+  try {
     dynamic currentLocation = LocationData;
 
-  var location = new Location();
-  var error;
+    var location = new Location();
+    var error;
 
-  try {
-    currentLocation = await location.getLocation();
+    try {
+      currentLocation = await location.getLocation();
 
-    latitude = currentLocation.latitude;
-    longtitude = currentLocation.longitude;
-    print(latitude);
-    print(longtitude);
-  } on PlatformException catch (e) {
-    if (e.code == 'PERMISSION_DENIED') {
-      error = 'Permission denied';
-     
+      latitude = currentLocation.latitude;
+      longtitude = currentLocation.longitude;
+      print(latitude);
+      print(longtitude);
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        error = 'Permission denied';
+      }
+      currentLocation = null;
     }
-    currentLocation = null;
-  }
- } catch (e) {
- }
+  } catch (e) {}
 }
 
 //page header------------------------------------------------------------------------------------
@@ -396,16 +417,18 @@ showOptionDaylog(BuildContext context, String titel, String contant, page) {
             content: Text(contant, textDirection: TextDirection.rtl),
             actions: [
               Row(
-                //mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.min,
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  RaisedButton(
-                    color: Colors.green,
-                    child: Text("نعم"),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (_) => page));
-                    },
+                  Expanded(
+                    child: RaisedButton(
+                      color: Colors.green,
+                      child: Text("نعم"),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                            context, MaterialPageRoute(builder: (_) => page));
+                      },
+                    ),
                   ),
                   SizedBox(
                     width: width / 3.5,
@@ -422,7 +445,42 @@ showOptionDaylog(BuildContext context, String titel, String contant, page) {
             ]);
       });
 }
+//------------------------------------------------------------
 
+//--------------------------------------------------------------------------------
+showYesNoDaylog(BuildContext context, String titel, String contant,void Function() yesFunction,void Function()noFunction) {
+  var width = MediaQuery.of(context).size.width;
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+            title: Text(titel, textDirection: TextDirection.rtl),
+            content: Text(contant, textDirection: TextDirection.rtl),
+            actions: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: RaisedButton(
+                      color: Colors.green,
+                      child: Text("نعم"),
+                      onPressed: yesFunction,
+                    ),
+                  ),
+                  SizedBox(
+                    width: width / 3.5,
+                  ),
+                  RaisedButton(
+                    color: Colors.red,
+                    child: Text("لا"),
+                    onPressed: noFunction,
+                  ),
+                ],
+              )
+            ]);
+      });
+}
 //-------------------------------------------------------------------------
 showDialogs(BuildContext context, String titel, String body) {
   var height = MediaQuery.of(context).size.height;
@@ -459,12 +517,12 @@ showDialogs(BuildContext context, String titel, String body) {
 
 //================================uniekID==============================================================
 int createUnidID() {
-  return DateTime.now().millisecondsSinceEpoch.remainder(1000);
+  return DateTime.now().millisecondsSinceEpoch.remainder(100);
 }
 
-
 //--------------------------------------------------------------------------------
-showOptionYesNo(BuildContext context, String titel, String contant,Function yseFuncation) {
+showOptionYesNo(
+    BuildContext context, String titel, String contant, Function yseFuncation) {
   var width = MediaQuery.of(context).size.width;
   showDialog(
       context: context,
@@ -478,50 +536,63 @@ showOptionYesNo(BuildContext context, String titel, String contant,Function yseF
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   RaisedButton(
-                    color: Colors.green,
-                    child: Text("نعم"),
-                    onPressed: yseFuncation
-                    
-                    
-                  ),
+                      color: Colors.green,
+                      child: Text("نعم"),
+                      onPressed: yseFuncation),
                   SizedBox(
                     width: width / 3.5,
                   ),
                   RaisedButton(
                     color: Colors.red,
                     child: Text("لا"),
-                    onPressed:(){
+                    onPressed: () {
                       Navigator.pop(context);
-
-                    }
-                     
-                    ,
+                    },
                   ),
                 ],
               )
             ]);
       });
 }
-String addToDB="هل تريد الاحتفاظ بنتيجة الفحص؟";
+
+String addToDB = "هل تريد الاحتفاظ بنتيجة الفحص؟";
 //=================================Buttoms=============================
 Widget buttomText(
-    context, String text,fontSize, Color textColor ,void Function() onPressed,
-    {Color backgrounColor=Colors.blue,double horizontal = 0.0, double vertical = 0.0,double evaluation=0.0}) {
+    context, String text, fontSize, Color textColor, void Function() onPressed,
+    {Color backgrounColor = Colors.blue,
+    double horizontal = 0.0,
+    double vertical = 0.0,
+    double evaluation = 0.0}) {
   return SizedBox(
     width: double.infinity,
     height: 45,
-
     child: TextButton(
       onPressed: onPressed,
-      child: Text(text,style:TextStyle(fontSize: fontSize)),
+      child: Text(text, style: TextStyle(fontSize: fontSize)),
       style: ButtonStyle(
         elevation: MaterialStateProperty.all(evaluation),
         backgroundColor: MaterialStateProperty.all(backgrounColor),
         foregroundColor: MaterialStateProperty.all(textColor),
-        padding: MaterialStateProperty.all(EdgeInsets.symmetric(
-            horizontal: horizontal, vertical: vertical)),
+        padding: MaterialStateProperty.all(
+            EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical)),
       ),
     ),
   );
 }
-
+divider({
+  double thickness = 2,
+  double indent = 15,
+  double endIndent = 15,
+  Color color=Colors.grey,
+}) {
+  return Align(
+    alignment: Alignment.topCenter,
+    child: VerticalDivider(
+      color: color,
+      thickness: thickness,
+      indent: indent,
+      endIndent: endIndent,
+      //width: 12,
+    ),
+  );
+}

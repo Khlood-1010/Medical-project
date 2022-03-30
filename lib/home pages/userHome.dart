@@ -3,7 +3,8 @@ import 'package:lottie/lottie.dart';
 
 import '../models.dart';
 import 'Emergency/Emergency.dart';
-import 'alerts/notification/AleartHome.dart';
+
+import 'alerts/AleartHome.dart';
 import 'meals/Meals.dart';
 import 'sugerTest/SugerTest.dart';
 

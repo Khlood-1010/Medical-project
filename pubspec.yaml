@@ -17,9 +17,9 @@ dependencies:
   location: ^2.5.4
   flutter_sms:
   geocoding:
-  firebase_core: any
-  firebase_auth: any
-  cloud_firestore: any
+  firebase_core: ^1.0.1
+  firebase_auth: ^1.0.1
+  cloud_firestore: ^1.0.1
   awesome_notifications: ^0.0.6+10
   email_validator: ^2.0.1
 
@@ -27,8 +27,10 @@ dependencies:
 
 
   # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  # Use with the Cup.ertinoIcons class for iOS style icons.
+  cupertino_icons: 
+  image_picker: 
+  firebase_storage: ^8.0.0
 
 dev_dependencies:
   flutter_test:
