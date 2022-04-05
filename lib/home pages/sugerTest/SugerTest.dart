@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:medical/home%20pages/userHome.dart';
+import 'package:flutter/services.dart';
 
 import '../../models.dart';
+import '../userHome.dart';
 
 class SugerTest extends StatefulWidget {
   SugerTest({Key key}) : super(key: key);
@@ -92,17 +93,22 @@ class _SugerTestState extends State<SugerTest> {
                                   print("g");
                                 },
                               ),
-                              "أدخل نسبة السكر في الدم",
+                              "أدخل نسبة السكر بعد الاكل",
                               false,
                               sugerPersentg,
                               validLeAgWe,
-                              12.0),
-                        ),
+                              12.0,
+                              keyboardType:TextInputType.phone,
+                               inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly],)),
+                              
+                        
                         SizedBox(height: 10),
 //السكر التراكمي--------------------------------------------------------------------------------
                         Visibility(
                           visible: sugerTrakText,
                           child: textFromField(
+
                               Icon(Icons.opacity_sharp, color: iconColor),
                               IconButton(
                                 icon: Icon(
@@ -114,12 +120,15 @@ class _SugerTestState extends State<SugerTest> {
                                   print("g");
                                 },
                               ),
-                              " أدخل نسبة السكر التراكمي ",
+                              " أدخل نسبة السكر قبل الاكل ",
                               false,
                               sugerTrakome,
                               validLeAgWe,
-                              12.0),
-                        ),
+                              12.0,
+                             keyboardType:TextInputType.phone,
+                               inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly],)),
+                        
                         SizedBox(height: 10),
 // وقت الاختبار--------------------------------------------------------------------------------
                         Container(
@@ -133,8 +142,8 @@ class _SugerTestState extends State<SugerTest> {
                                 "اختر نوع تحليل السكر                     "),
                             value: test,
                             items: <String>[
-                              "فحص السكر التراكمي",
-                              'بعد الاكل بساعتين',
+                              "قبل الاكل",
+                              'بعد الاكل',
                             ].map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -145,7 +154,7 @@ class _SugerTestState extends State<SugerTest> {
                               setState(() {
                                 test = vale;
                                 switch (test) {
-                                  case "فحص السكر التراكمي":
+                                  case "قبل الاكل":
                                     {
                                       setState(() {
                                         sugerPerText = false;
@@ -154,7 +163,7 @@ class _SugerTestState extends State<SugerTest> {
                                       });
                                     }
                                     break;
-                                  case 'بعد الاكل بساعتين':
+                                  case 'بعد الاكل':
                                     {
                                       setState(() {
                                         sugerPerText = true;
@@ -189,11 +198,11 @@ class _SugerTestState extends State<SugerTest> {
                                 var formdata = formstat.currentState;
                                 if (formdata.validate() == true) {
                                   switch (test) {
-                                    case "فحص السكر التراكمي":
-                                      trakomeTest(sugerTrakome.text);
+                                    case "قبل الاكل":
+                                      randoumTest(sugerTrakome.text);
                                       // sugerTrakome.clear();
                                       break;
-                                    case 'بعد الاكل بساعتين':
+                                    case 'بعد الاكل':
                                       randoumTest(sugerPersentg.text);
                                       // sugerPersentg.clear();
                                       break;
@@ -212,42 +221,14 @@ class _SugerTestState extends State<SugerTest> {
     );
   }
 
-//--------------------------اظهار النتيجة في حاله الفحص التراكمي----------------------------
-  trakomeTest(test) {
-    testToInt = num.parse(test.trim());
-    if (testToInt < 4) {
-     setState(() {
-        diabetesResult = "منخفض";
-      });
-      showOptionYesNo(context, "نتيجة الفحص",
-          " لديك هبوط حاد في السكر " + addToDB, addSugerTestToDb);
-    } else if (testToInt >= 4 && testToInt <= 6.4) {
-       setState(() {
-        diabetesResult = "طبيعي";
-      });
-      showDialogMethod(context, "نتيجة الفحص",
-          " انت مهدد بشدة بالإصابة بمرض السكري ومعدل السكر في الدم اعلي من طبيعي");
-    } else {
-      setState(() {
-        diabetesResult = "مرتفع";
-      });
-      showOptionYesNo(
-          context,
-          "نتيجة الفحص",
-          " انت  مصاب بالسكر ومعدل السكر في الدم مرتفع" + addToDB,
-          addSugerTestToDb);
-    }
-  }
-
-//----------------------اظهار النتيجة في حاله الفحص بعد الاكل--------------------------------
-  randoumTest(test) {
+ randoumTest(test) {
     testToInt = int.parse(test.trim());
     if (testToInt < 80) {
       setState(() {
         diabetesResult = "منخفض";
       });
       showOptionYesNo(context, "نتيجة الفحص",
-          " لديك هبوط حاد في السكر " + addToDB, addSugerTestToDb);
+          " لديك هبوط  في السكر " + addToDB, addSugerTestToDb);
     } else if (testToInt >= 80 && testToInt <= 130) {
       setState(() {
         diabetesResult = "طبيعي";
@@ -255,7 +236,7 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(
           context,
           "نتيجة الفحص",
-          " معدل السكر في الدم طبيعي" + addToDB,
+          "انت غير مصاب بالسكر ومعدل السكر في الدم طبيعي " + addToDB,
           addSugerTestToDb);
     } else {
       setState(() {
@@ -264,7 +245,7 @@ class _SugerTestState extends State<SugerTest> {
       showOptionYesNo(
           context,
           "نتيجة الفحص",
-          " معدل السكر في الدم مرتفع" + addToDB,
+          "انت  مصاب بالسكر ومعدل السكر في الدم مرتفع " + addToDB,
           addSugerTestToDb);
     }
   }
@@ -274,13 +255,15 @@ class _SugerTestState extends State<SugerTest> {
     lodding(context, "");
     await FirebaseFirestore.instance.collection('SugarTable').add({
       "userID": userId,
+      "createdOn":FieldValue.serverTimestamp(),
       'Emile': userEmail,
       "Date of Test":
           "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
       "Time of Test": "${DateTime.now().hour} : ${DateTime.now().minute}",
       "Measure": sugerPerText ? sugerPersentg.text : sugerTrakome.text,
-      "Diabetes type": sugerPerText ? "عشوائي" : "تراكمي",
-      "diabetes result": diabetesResult
+      "Diabetes type": sugerPerText ? "بعد الاكل" : "قبل الاكل",
+      "diabetes result": diabetesResult,
+       
     })
 
         //التحقق ما اذا تمت العمليه بنجاح ام لا

@@ -25,7 +25,8 @@ class _MealsState extends State<Meals> {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          
+           appBar: AppBar(backgroundColor: appColor,title:Text("الوجبات"),centerTitle: true),
+          drawer: drawer(context),
           body: page[_selectedIndex],
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,

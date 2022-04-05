@@ -26,12 +26,15 @@ var latitude, longtitude;
 
 //textField----------------------------------------------------------------------------
 TextFormField textFromField(Widget icons, suffixIcon, String hitText,
-    bool hintPass, TextEditingController mycontroller, myvali, fontSize) {
+    bool hintPass, TextEditingController mycontroller, myvali, fontSize,{List<TextInputFormatter> inputFormatters,
+  TextInputType keyboardType}) {
   return TextFormField(
     obscureText: hintPass,
     validator: myvali,
     controller: mycontroller,
     autovalidateMode: AutovalidateMode.onUserInteraction,
+    inputFormatters: inputFormatters,
+    keyboardType: keyboardType,
     decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[300],
@@ -44,7 +47,6 @@ TextFormField textFromField(Widget icons, suffixIcon, String hitText,
         contentPadding: EdgeInsets.all(10)),
   );
 }
-
 //textField validate methot----------------------------------------------------------------------------
 
 //التحقق من صحه الاسم المدخل
@@ -417,18 +419,16 @@ showOptionDaylog(BuildContext context, String titel, String contant, page) {
             content: Text(contant, textDirection: TextDirection.rtl),
             actions: [
               Row(
-                mainAxisSize: MainAxisSize.min,
+                //mainAxisSize: MainAxisSize.min,
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: RaisedButton(
-                      color: Colors.green,
-                      child: Text("نعم"),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context, MaterialPageRoute(builder: (_) => page));
-                      },
-                    ),
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("نعم"),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (_) => page));
+                    },
                   ),
                   SizedBox(
                     width: width / 3.5,
@@ -458,15 +458,13 @@ showYesNoDaylog(BuildContext context, String titel, String contant,void Function
             content: Text(contant, textDirection: TextDirection.rtl),
             actions: [
               Row(
-                mainAxisSize: MainAxisSize.min,
+                //mainAxisSize: MainAxisSize.min,
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: RaisedButton(
-                      color: Colors.green,
-                      child: Text("نعم"),
-                      onPressed: yesFunction,
-                    ),
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("نعم"),
+                    onPressed: yesFunction,
                   ),
                   SizedBox(
                     width: width / 3.5,
