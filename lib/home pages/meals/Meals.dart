@@ -12,7 +12,7 @@ class Meals extends StatefulWidget {
   _MealsState createState() => _MealsState();
 }
 
-class _MealsState extends State<Meals> {
+class _MealsState extends State<Meals>with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
   final List page = [
     SuggestedMeals(),
@@ -66,4 +66,8 @@ class _MealsState extends State<Meals> {
       _selectedIndex = index;
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

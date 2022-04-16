@@ -309,6 +309,7 @@ class _SugerTestState extends State<SugerTest> {
             child: AlertDialog(
               titlePadding: EdgeInsets.zero,
                 title: Container(
+                  height: 60,
                   color:appColor,
                   width: double.infinity,
                   child: Center(
@@ -319,7 +320,7 @@ class _SugerTestState extends State<SugerTest> {
                   ),
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    EdgeInsets.symmetric(horizontal: 0, vertical: 2),
                 content: SizedBox(
                     child: StreamBuilder(
                   stream: getReport.orderBy('createdOn', descending: true).snapshots(),

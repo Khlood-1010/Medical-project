@@ -12,7 +12,7 @@ class MyMeals extends StatefulWidget {
   State<MyMeals> createState() => _MyMealsState();
 }
 
-class _MyMealsState extends State<MyMeals> {
+class _MyMealsState extends State<MyMeals>with AutomaticKeepAliveClientMixin {
   var userId;
     @override
   void initState() {
@@ -142,6 +142,10 @@ class _MyMealsState extends State<MyMeals> {
   Widget heder(String name) {
     return text(context, name, 9, appColor, fontWeight: FontWeight.w700);
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
   //--------------------------------------------------
 
 }

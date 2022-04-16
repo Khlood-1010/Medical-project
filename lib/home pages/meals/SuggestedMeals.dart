@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../models.dart';
 import 'MyMeals.dart';
@@ -13,7 +14,7 @@ class SuggestedMeals extends StatefulWidget {
   State<SuggestedMeals> createState() => _SuggestedMealsState();
 }
 
-class _SuggestedMealsState extends State<SuggestedMeals> {
+class _SuggestedMealsState extends State<SuggestedMeals>with AutomaticKeepAliveClientMixin {
   List diabetesTherpy = [];
   var collection, mealsID;
   var userId;
@@ -305,4 +306,8 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
       );
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
