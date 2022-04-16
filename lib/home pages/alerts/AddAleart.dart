@@ -72,11 +72,11 @@ class _AddAleartState extends State<AddAleart> {
               17,
               10,
               10,
-              370,
+              340,
               50,
               10,
               10,
-              20,
+              60,
               white,
               10,
               Form(
@@ -313,11 +313,11 @@ class _AddAleartState extends State<AddAleart> {
     var imagepeket = await ImagePicker().getImage(source: ImageSource.gallery);
     if (imagepeket != null) {
       setState(() {
-        color = Colors.transparent;
+       
         fileImage = File(imagepeket.path);
         imageName = path.basename(imagepeket.path);
         imageRef =
-            FirebaseStorage.instance.ref("productImage").child("$imageName");
+            FirebaseStorage.instance.ref("medicalImage").child("$imageName");
       });
     }
   }

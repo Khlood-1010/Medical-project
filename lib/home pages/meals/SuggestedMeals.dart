@@ -15,7 +15,7 @@ class SuggestedMeals extends StatefulWidget {
 
 class _SuggestedMealsState extends State<SuggestedMeals> {
   List diabetesTherpy = [];
-  var collection;
+  var collection, mealsID;
   var userId;
   bool selectMeals = false;
   IconData addMeals = Icons.bookmark_border;
@@ -27,12 +27,12 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
     getType();
   }
 
-  CollectionReference mealsCollection ;
-     
+  CollectionReference mealsCollection;
+
   @override
   Widget build(BuildContext context) {
     print(collection);
-     mealsCollection =FirebaseFirestore.instance.collection("$collection");
+    mealsCollection = FirebaseFirestore.instance.collection("$collection");
     return Scaffold(
         body: Container(
             // color: Colors.red,
@@ -44,22 +44,38 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child:collection==null?
-                  Center(child: text(context, "لمن تظهر الوجبات الا بعد اختبار السكر", 14, appColor)): 
-                  StreamBuilder(
-                      stream: mealsCollection.snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot snapshat) {
-                        if (snapshat.hasError) {
-                          return Text("Connection error");
-                        }
-                        if (snapshat.hasData) {
-                          return getMeals(context, snapshat);
-                        }
+                  child: collection == null
+                      ? Center(
+                          child: text(
+                              context,
+                              "لمن تظهر الوجبات الا بعد اختبار السكر",
+                              14,
+                              appColor))
+                      : StreamBuilder(
+                          stream: mealsCollection.snapshots(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshat) {
+                            if (snapshat.hasError) {
+                              return Text("Connection error");
+                            }
+                            if (snapshat.hasData) {
+                              
+                              return Column(
+                                children: [
+                                  Expanded(child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Align(alignment: Alignment.topRight,child: text(context, "وجبات السكر ال${diabetesTherpy[0]}", 14, black)),
+                                  )),
+                                  // SizedBox(height:10),
+                                  Expanded(flex: 9,child:getMeals(context, snapshat) ),
+                                ],
+                              );
+                            }
 
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }),
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                 )),
               ],
             )));
@@ -123,32 +139,39 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
                                       alignment: Alignment.topLeft,
                                       child: IconButton(
                                           onPressed: () {
-                                            addToMyMeals(
-                                                mealsId:
-                                                    snapshat.data.docs[i].id,
-                                                mealsLenght: snapshat
-                                                    .data.docs[i]
-                                                    .data()['Categories']
-                                                    .length,
-                                                Categories: snapshat
-                                                    .data.docs[i]
-                                                    .data()['Categories'],
-                                                Calories: snapshat.data.docs[i]
-                                                    .data()['Calories'],
-                                                fat: snapshat.data.docs[i]
-                                                    .data()['fat'],
-                                                carbs: snapshat.data.docs[i]
-                                                    .data()['carbs'],
-                                                Protein: snapshat.data.docs[i]
-                                                    .data()['Protein'],
-                                                image: snapshat.data.docs[i]
-                                                    .data()['image']);
-                                            setState(() {
-                                              selectMeals = !selectMeals;
-                                            });
+//الغاء تفضيل الوجبة---------------------------------------
+                                            if (snapshat.data.docs[i]
+                                                    .data()['fav'] ==
+                                                true) {
+                                              deleteMeals(
+                                                snapshat.data.docs[i].id,
+                                              );
+                                            }
+
+//تفضيل وجبة-------------------------------------------------------------------------
+                                            else {
+                                              addToMyMeals(
+                                                  snapshat.data.docs[i].id,
+                                                  snapshat.data.docs[i]
+                                                      .data()['Categories'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['Calories'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['fat'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['carbs'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['Protein'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['image'],
+                                                  snapshat.data.docs[i]
+                                                      .data()['MealID']);
+                                            }
                                           },
                                           icon: Icon(
-                                            selectMeals
+                                            snapshat.data.docs[i]
+                                                        .data()['fav'] ==
+                                                    true
                                                 ? NotAddMeals
                                                 : addMeals,
                                             color: appColor,
@@ -179,7 +202,7 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
               );
             },
           )
-        : Text("لاتوجد بيانات لعرضها");
+        : Text("no daaaaaaata");
   }
 
   Widget heder(String name) {
@@ -212,15 +235,13 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
           });
         } else if (diabetesTherpy[0] == "طبيعي") {
           setState(() {
-            collection = "NormalSugar";
+            collection = "NormalSugare";
           });
         } else {
           setState(() {
             collection = null;
           });
         }
-        print(collection);
-        print("=========================");
       });
     } catch (e) {
       setState(() {
@@ -230,32 +251,58 @@ class _SuggestedMealsState extends State<SuggestedMeals> {
     }
   }
 
+//--------------------------------------------------------
   void addToMyMeals(
-      {image,
-      mealsId,
-      mealsLenght,
-      Categories,
-      Calories,
-      fat,
-      carbs,
-      Protein}) {
-    FirebaseFirestore.instance.collection("MyMeals").add({
-      "UserId": userId,
-      "Categories": Categories,
-      'fat': fat,
-      'mealsLenght': mealsLenght,
-      'Calories': Calories,
-      'carbs': carbs,
-      'Protein': Protein,
-      'image': image
-    }).then((value) {
+      id, Categories, Calories, fat, carbs, Protein, image, mealID) {
+    showOptionYesNo(context, "تفضيل وجبة", "هل تريد اضافة الوجبة الي وجباتي؟",
+        () {
+      lodding(context, "");
+
+      FirebaseFirestore.instance.collection("MyMeals").add({
+        "UserId": userId,
+        "Categories": Categories,
+        'fat': fat,
+        'Calories': Calories,
+        'carbs': carbs,
+        'Protein': Protein,
+        'image': image,
+      }).then((value) {
+        Navigator.pop(context);
+        updateMeals("$id", true);
+      });
+    });
+  }
+
+//------------------------------------------------------
+  void deleteMeals(id) {
+    showOptionYesNo(
+        context, "الغاء تفضيل الوجبة", "هل تريد حذف الوجبة من قائمة وجباتي؟",
+        () {
+      // lodding(context, "");
+      // FirebaseFirestore.instance
+      //     .collection("MyMeals")
+      //     .doc(id)
+      //     .delete()
+      //     .then((value) {
+      //   Navigator.pop(context);
+        updateMeals("$id", false);
+      // });
+    });
+  }
+
+  //------------------------------------------------------
+  updateMeals(id, bool select) {
+    FirebaseFirestore.instance
+        .collection("$collection")
+        .doc(id)
+        .update({'fav': select}).then((value) {
       Navigator.pop(context);
-      showOptionDaylog(
-          context,
-          "افة منبهه",
-          "تمت اضافة الوجبة الي قائمة وجباتك المفضلة, هل تريد الانتقال الي صفحة وجباتي؟",
-          MyMeals());
-      //ارجاع الحقول فارغه
+
+      showDialogMethod(
+        context,
+        select ? "تفضيل وجبة" : "الغاء تفضيل وجبة",
+        "تمت العملية بنجاح ",
+      );
     });
   }
 }

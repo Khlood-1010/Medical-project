@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:medical/home%20pages/userHome.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 
@@ -99,11 +99,11 @@ class _UpdateAleartState extends State<UpdateAleart> {
               17,
               10,
               10,
-              370,
+              340,
               50,
               10,
               10,
-              20,
+              60,
               white,
               10,
               Form(
@@ -286,7 +286,7 @@ class _UpdateAleartState extends State<UpdateAleart> {
                             onPressed: () async {
                               var formdata = formstat.currentState;
                               if (formdata.validate()) {
-                                lodding(context, " اضافة منبهه");
+                                lodding(context, "تعديل تنبيه");
 //لم يقم المستخدم بتعديل الصورة------------------------------------------------------------
                                 if (fileImage == null) {
                                   if (selectedTime == null) {

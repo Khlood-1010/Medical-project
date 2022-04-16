@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 
 import '../../models.dart';
+import '../userHome.dart';
 
 class Emergence extends StatefulWidget {
   Emergence({Key key}) : super(key: key);
@@ -15,12 +16,15 @@ class Emergence extends StatefulWidget {
 }
 
 class _EmergenceState extends State<Emergence> {
+  TextEditingController phone = TextEditingController();
   var user;
+  var docId;
   List phoneFromdb = [];
   var contriy, street, name, locality;
   String string = '';
   bool visable = false;
   TextEditingController helth = TextEditingController();
+  GlobalKey<FormState> formstat =GlobalKey();
 
   //get urrent user
   getCurrentUser() {
@@ -31,6 +35,7 @@ class _EmergenceState extends State<Emergence> {
   @override
   void initState() {
     super.initState();
+
     setState(() {
       getPhoneNumber();
       getLocaion();
@@ -40,12 +45,13 @@ class _EmergenceState extends State<Emergence> {
 
   @override
   Widget build(BuildContext context) {
+    print(phoneFromdb);
     var height = MediaQuery.of(context).size.height;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(backgroundColor: appColor),
-        drawer: drawer(context),
+        drawer: drawer(context, username, email),
         body: Container(
             color: itemColor,
             height: height,
@@ -58,6 +64,7 @@ class _EmergenceState extends State<Emergence> {
 //current location-------------------------------------------
                   //
                   Container(
+                      //color: Colors.red,
                       margin: EdgeInsets.only(top: 40, left: 20, right: 12),
                       child: Row(
                         children: [
@@ -97,36 +104,6 @@ class _EmergenceState extends State<Emergence> {
                                 fontWeight: FontWeight.bold, color: white))),
                   ),
 
-//text-------------------------------------------
-                  // Container(
-                  //     margin: EdgeInsets.only(top: 20, left: 20, right: 12),
-                  //     child: Text("  وصف الحالة الصحية (اختياري)")),
-//Edit Field-------------------------------------------
-
-                  // Container(
-                  //   height: height / 5,
-                  //   width: double.infinity,
-                  //   margin: EdgeInsets.only(top: 5, left: 20, right: 20),
-                  //   // color: Colors.red,
-                  //   child: TextField(
-                  //     controller: helth,
-                  //     maxLength: 20,
-                  //     maxLines: 8,
-                  //     decoration: InputDecoration(
-                  //         filled: true,
-                  //         fillColor: Colors.grey[200],
-                  //         labelStyle:
-                  //             TextStyle(color: Colors.grey, fontSize: 13),
-                  //         border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(10)),
-                  //         //prefixIcon: Icon(Icons.pin_drop_rounded,size:44),
-                  //         labelText: "علي سبيل المثال هبوط في السكري",
-                  //         contentPadding: EdgeInsets.all(10)),
-                  //   ),
-                  // ),
-
-//SEND BUTTOM-------------------------------------------
-
                   Container(
                       //color: Colors.red,
                       width: double.infinity,
@@ -148,6 +125,24 @@ class _EmergenceState extends State<Emergence> {
                               ["${phoneFromdb[0]}"]);
                         },
                       )),
+
+                  SizedBox(height: 10),
+                  Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: 10, right: 20, left: 20),
+                      child: RaisedButton.icon(
+                        color: appColor,
+                        icon: Icon(Icons.pin_drop_rounded,
+                            size: 0, color: Colors.black),
+                        label: Text("تعديل رقم الطوارئ",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: white)),
+                        onPressed: () {
+                          changPhone();
+                        },
+                      )),
                 ],
               ),
             )),
@@ -164,28 +159,25 @@ class _EmergenceState extends State<Emergence> {
         print(onError);
       });
       print(_result);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
 //get location address-----------------------------------------------------------
 
   _getLocationAddress(lat, long) async {
-    
-   try {
+    try {
       List<Placemark> placemark = await placemarkFromCoordinates(lat, long);
 
-    setState(() {
-      name = placemark[0].subLocality;
-      street = placemark[0].thoroughfare;
-      contriy = placemark[0].country;
-      locality = placemark[0].locality;
-      string = "$contriy,$locality,$name,$street";
+      setState(() {
+        name = placemark[0].subLocality;
+        street = placemark[0].thoroughfare;
+        contriy = placemark[0].country;
+        locality = placemark[0].locality;
+        string = "$contriy,$locality,$name,$street";
 
-      print(string);
-    });
-   } catch (e) {
-   }
+        print(string);
+      });
+    } catch (e) {}
   }
 
 //get phone from db-----------------------------------------------------------
@@ -199,8 +191,70 @@ class _EmergenceState extends State<Emergence> {
       value.docs.forEach((element) {
         setState(() {
           phoneFromdb.add(element.data()['phone']);
+          phone.text = '${phoneFromdb[0]}';
+          docId = element.id;
         });
       });
     });
+  }
+
+  changPhone() {
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: AlertDialog(
+                title: Text(
+                  "تغير رقم الطوارئ",
+                  textDirection: TextDirection.rtl,
+                ),
+                content: Form(
+                  key:formstat,
+                  child: textFromField(
+                      Icon(Icons.call, color: Colors.redAccent[700]),
+                      Icon(Icons.add, size: 0),
+                      "الرقم",
+                      false,
+                      phone,
+                      valedPhone,
+                      14.0,keyboardType:TextInputType.phone  ),
+                ),
+                actions: [
+                  Center(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          onPressed: () async {
+                            lodding(context,   "تغير رقم الطوارئ",);
+                            if (formstat.currentState.validate()) {
+                              await FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc("$docId")
+                                  .update({
+                                'phone': phone.text,
+                              }).then((value) {
+                                Navigator.pop(context);
+                                showOptionDaylog(
+                                    context,
+                                     "تغير رقم الطوارئ",
+                                    "تمت العملية بنجاح هل تريد الانتقال الي الصفحة الرئيسية؟",
+                                    UserHome());
+                              });
+                            }
+                          },
+                          icon: Icon(Icons.edit)),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.clear)),
+                    ],
+                  ))
+                ]),
+          );
+        });
   } //get
 } //class

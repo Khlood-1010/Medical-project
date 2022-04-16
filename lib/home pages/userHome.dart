@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
 import '../models.dart';
 import 'Emergency/Emergency.dart';
-
 import 'alerts/AleartHome.dart';
 import 'meals/Meals.dart';
 import 'sugerTest/SugerTest.dart';
+
+String username = '';
+String email = '';
 
 class UserHome extends StatefulWidget {
   UserHome({Key key}) : super(key: key);
@@ -16,6 +19,26 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
+  var user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser.uid;
+    FirebaseFirestore.instance
+        .collection("user")
+        .where("userID", isEqualTo: "$user")
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        setState(() {
+          username = element.data()['name'];
+          email = element.data()['Emile'];
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -24,10 +47,10 @@ class _UserHomeState extends State<UserHome> {
     List page = [SugerTest(), AleartHome(), Meals(), Emergence()];
 //catogarys images-------------------------------------------
     List<String> image = [
-      "lib/lottie/blood-test.json",
-      "lib/lottie/stopwatch.json",
-      "lib/lottie/healthy-breaksfast.json",
-      "lib/lottie/emergency-call.json"
+      "lib/assist/suger.jpg",
+      "lib/assist/midical4.jpg",
+      "lib/assist/meals.jpg",
+      "lib/assist/em.jpg"
     ];
 //catogarys names-------------------------------------------
     List<String> cato_names = ["اختبار السكر", "تنبيهات", "الوجبات", "الطوارئ"];
@@ -48,7 +71,7 @@ class _UserHomeState extends State<UserHome> {
             elevation: 0,
             backgroundColor: appColor,
           ),
-          drawer: drawer(context),
+          drawer: drawer(context, username, email),
 //main body--------------------------------------------------
           body: Container(
             height: height,
@@ -86,27 +109,35 @@ class _UserHomeState extends State<UserHome> {
                       itemCount: 4,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, //عدد العناصر في كل صف
-                          crossAxisSpacing: 20, // المسافات الراسية
-                          childAspectRatio: 0.70, //حجم العناصر
-                          mainAxisSpacing: 2 //المسافات الافقية
+                          crossAxisSpacing: 15, // المسافات الراسية
+                          childAspectRatio: 0.90, //حجم العناصر
+                          mainAxisSpacing: 0 //المسافات الافقية
 
                           ),
                       itemBuilder: (context, i) {
                         return InkWell(
                           onTap: () {
-                           
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (_) => page[i]));
                           },
                           child: Container(
-                            padding: EdgeInsets.all(20),
+                            padding: EdgeInsets.all(5),
                             child: Column(
                               children: [
                                 Container(
+                                  height: 120,
+
+                                  width: 200,
                                   decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(image[i]),
+                                        fit: BoxFit.cover,
+                                        colorFilter: ColorFilter.mode(
+                                            Colors.black54, BlendMode.darken),
+                                      ),
                                       boxShadow: [
                                         BoxShadow(
-                                          blurRadius: 6,
+                                          blurRadius: 1,
                                           spreadRadius: 1,
                                         )
                                       ],
@@ -114,17 +145,20 @@ class _UserHomeState extends State<UserHome> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(20))),
                                   //cato_image-------------------------
-
-                                  child: Lottie.asset(image[i],
-                                      fit: BoxFit.contain),
+                                  child: Center(
+                                    child: Text(cato_names[i],
+                                        style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: white,
+              )),
+                                  ),
                                 ),
                                 //names-------------------------
-                                Container(
-                                  margin: EdgeInsets.only(top: 10, bottom: 10),
-                                  child: Text(cato_names[i],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
+                                // Container(
+                                //   margin: EdgeInsets.only(top: 10, bottom: 10),
+                                //   child:
+                                // ),
                               ],
                             ),
                           ),

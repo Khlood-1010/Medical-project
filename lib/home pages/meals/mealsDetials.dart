@@ -31,13 +31,13 @@ class _MealsDetialsState extends State<MealsDetials> {
         appBar: AppBar(
             elevation: 10,
             centerTitle: true,
-            actions: [
+            leading: 
               IconButton(
                   onPressed: () {
                     goToPage(context, Meals());
                   },
-                  icon: Icon(Icons.arrow_forward))
-            ],
+                  icon: Icon(Icons.arrow_back))
+            ,
             backgroundColor: Colors.black54,
             title: Text("تفاصيل الوجبة")),
         body: Container(

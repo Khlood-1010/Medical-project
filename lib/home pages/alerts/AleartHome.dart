@@ -6,11 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../models.dart';
+import '../userHome.dart';
 import 'AddAleart.dart';
 import 'UpdateAleart.dart';
 import 'notification.dart';
-import '../../models.dart';
-
 
 class AleartHome extends StatefulWidget {
   AleartHome({Key key}) : super(key: key);
@@ -21,7 +20,7 @@ class AleartHome extends StatefulWidget {
 
 class _AleartHomeState extends State<AleartHome> {
   Icon unActiveNotification =
-      Icon(Icons.notifications_none_sharp, color: iconColor);
+      Icon(Icons.notifications_none_outlined, color: iconColor);
   Icon ActiveNotification = Icon(Icons.notifications_active, color: iconColor);
   CollectionReference aleartCollection =
       FirebaseFirestore.instance.collection("medical");
@@ -32,7 +31,7 @@ class _AleartHomeState extends State<AleartHome> {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-            drawer: drawer(context),
+            drawer: drawer(context,username,email),
             appBar: AppBar(backgroundColor: appColor),
             body: Container(
                 child: Column(

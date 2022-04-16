@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
-import 'home pages/ConcatUs/ConcatUs.dart';
 import 'home pages/Emergency/Emergency.dart';
 import 'home pages/alerts/AddAleart.dart';
 import 'home pages/alerts/AleartHome.dart';
@@ -123,7 +122,7 @@ Widget text(
 }
 
 //drawer------------------------------------------------------------------------------------
-Drawer drawer(conext) {
+Drawer drawer(conext,String text,String email) {
   return Drawer(
     child: ListView(
       children: [
@@ -135,8 +134,8 @@ Drawer drawer(conext) {
                 "lib/assist/profile.jpg",
               ),
             ),
-            accountName: Text("خلود الحربي"),
-            accountEmail: Text("khlood.1100@hotmail.com")),
+            accountName: Text(text),
+            accountEmail: Text(email)),
         ListTile(
           title: Text("الصفحة الرئسية"),
           leading: Icon(Icons.home, color: iconColor),
@@ -172,13 +171,7 @@ Drawer drawer(conext) {
             goToPage(conext, Emergence());
           },
         ),
-        ListTile(
-          title: Text("التواصل"),
-          leading: Icon(Icons.contact_support_sharp, color: iconColor),
-          onTap: () {
-            goToPage(conext, ConcatUs());
-          },
-        ),
+        
         ListTile(
           title: Text("تسجيل الخروج"),
           leading: Icon(Icons.logout, color: iconColor),
@@ -191,6 +184,7 @@ Drawer drawer(conext) {
     ),
   );
 }
+
 
 //custumer clipper for continer------------------------------------------------------------------------------------
 

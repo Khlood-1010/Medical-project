@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medical/home%20pages/userHome.dart';
 
 import '../../models.dart';
 import 'MyMeals.dart';
@@ -26,7 +27,7 @@ class _MealsState extends State<Meals> {
         textDirection: TextDirection.rtl,
         child: Scaffold(
            appBar: AppBar(backgroundColor: appColor,title:Text("الوجبات"),centerTitle: true),
-          drawer: drawer(context),
+          drawer: drawer(context,username,email),
           body: page[_selectedIndex],
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,

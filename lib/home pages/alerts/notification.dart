@@ -13,8 +13,8 @@ Future<void> createNotification(id, context, medicalName, int hour, int minet,
         notificationLayout: NotificationLayout.BigPicture),
     schedule: NotificationCalendar(
        hour: hour,
-        minute: minet,
-        second: 10, millisecond: 0, repeats: repet),
+       minute: minet,
+       second: 0, millisecond: 0, repeats: repet),
   );
 }
 
