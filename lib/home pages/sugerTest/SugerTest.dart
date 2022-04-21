@@ -323,7 +323,7 @@ class _SugerTestState extends State<SugerTest> {
                     EdgeInsets.symmetric(horizontal: 0, vertical: 2),
                 content: SizedBox(
                     child: StreamBuilder(
-                  stream: getReport.orderBy('createdOn', descending: true).snapshots(),
+                  stream: getReport.orderBy('createdOn', descending: true).where( "userID",isEqualTo: userId,).snapshots(),
                   builder: (context, AsyncSnapshot snapshots) {
                     if (snapshots.hasData) {
                       return snapshots.data.docs.length > 0? 
