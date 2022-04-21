@@ -46,6 +46,7 @@ class _EmergenceState extends State<Emergence> {
   @override
   Widget build(BuildContext context) {
     print(phoneFromdb);
+print(phone.text); 
     var height = MediaQuery.of(context).size.height;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -191,7 +192,7 @@ class _EmergenceState extends State<Emergence> {
       value.docs.forEach((element) {
         setState(() {
           phoneFromdb.add(element.data()['phone']);
-          phone.text = '${phoneFromdb[0]}';
+          phone.text=phoneFromdb[0];
           docId = element.id;
         });
       });
@@ -215,7 +216,7 @@ class _EmergenceState extends State<Emergence> {
                   child: textFromField(
                       Icon(Icons.call, color: Colors.redAccent[700]),
                       Icon(Icons.add, size: 0),
-                      "الرقم",
+                     "الرقم",
                       false,
                       phone,
                       valedPhone,
@@ -228,8 +229,9 @@ class _EmergenceState extends State<Emergence> {
                     children: [
                       IconButton(
                           onPressed: () async {
-                            lodding(context,   "تغير رقم الطوارئ",);
+                           
                             if (formstat.currentState.validate()) {
+                               lodding(context,   "تغير رقم الطوارئ",);
                               await FirebaseFirestore.instance
                                   .collection('user')
                                   .doc("$docId")
@@ -243,6 +245,11 @@ class _EmergenceState extends State<Emergence> {
                                     "تمت العملية بنجاح هل تريد الانتقال الي الصفحة الرئيسية؟",
                                     UserHome());
                               });
+                            
+                            }
+                            else{
+                              Navigator.pop(context);
+                              showDialogMethod(context, "تغير رقم الطوارئ", "تاكد من صحه الرقم");
                             }
                           },
                           icon: Icon(Icons.edit)),
